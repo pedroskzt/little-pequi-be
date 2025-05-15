@@ -1,3 +1,5 @@
+<div align="center">
+
 # 🍽️ Little Pequi Restaurant - Backend
 
 [![Python](https://img.shields.io/badge/Python-3.12-blue.svg?style=flat&logo=python)](https://www.python.org)
@@ -7,6 +9,7 @@
 
 [![Frontend](https://img.shields.io/badge/Littl%20Pequi%20Frontend-0.0.1-F9D259)](https://github.com/pedroskzt/LittlePequi-FE)
 
+</div>
 ## Project Overview
  
 The Little Pequi restaurant project is a comprehensive restaurant management solution developed to showcase my full-stack web application development skills.
@@ -55,7 +58,7 @@ This service is a modern, Python and Django-based REST API backend, built with D
 
 
 
-## 📁️ Application Structure
+## 📁️ Project Structure
 
 ```
 .

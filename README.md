@@ -1,3 +1,5 @@
+<div align="center">
+
 # 🍽️ Little Pequi Restaurant - Backend
 
 [![Python](https://img.shields.io/badge/Python-3.12-blue.svg?style=flat&logo=python)](https://www.python.org)
@@ -5,8 +7,9 @@
 [![DRF](https://img.shields.io/badge/DRF-3.16.0-red.svg?style=flat&logo=)](https://www.django-rest-framework.org/)
 [![Simple JWT](https://img.shields.io/badge/Simple%20JWT-5.5.0-green)](https://github.com/jazzband/djangorestframework-simplejwt)
 
-[![Frontend](https://img.shields.io/badge/Littl%20Pequi%20Frontend-0.0.1-F9D259)](https://github.com/pedroskzt/portfolio-FE)
+[![Frontend](https://img.shields.io/badge/Littl%20Pequi%20Frontend-0.0.1-F9D259)](https://github.com/pedroskzt/LittlePequi-FE)
 
+</div>
 ## Project Overview
  
 The Little Pequi restaurant project is a comprehensive restaurant management solution developed to showcase my full-stack web application development skills.
@@ -55,7 +58,7 @@ This service is a modern, Python and Django-based REST API backend, built with D
 
 
 
-## 📁️ Application Structure
+## 📁️ Project Structure
 
 ```
 .
@@ -84,7 +87,7 @@ This service is a modern, Python and Django-based REST API backend, built with D
 1. **Clone the repository**
 
    ```bash
-   git clone https://github.com/pedroskzt/portfolio-BE.git
+   git clone https://github.com/pedroskzt/LittlePequi-BE.git
    cd portfolio-BE
    ```
 
@@ -181,7 +184,7 @@ To authenticate API requests:
    ```
 ## Related Projects
 
-- Frontend Repository: [Little Pequi Restaurant Frontend](https://github.com/pedroskzt/portfolio-FE)
+- Frontend Repository: [Little Pequi Restaurant Frontend](https://github.com/pedroskzt/LittlePequi-FE)
 
 ## 🚧 Development Status and Contributions
 

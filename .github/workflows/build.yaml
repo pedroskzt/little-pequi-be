@@ -12,7 +12,7 @@ env:
 
 jobs:
   test_backend:
-    uses: ./.github/workflows/test-backend.yaml@master
+    uses: ./.github/workflows/test-backend.yaml
 
   docker_build:
     runs-on: ubuntu-latest

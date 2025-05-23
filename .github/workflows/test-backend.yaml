@@ -4,7 +4,8 @@ on:
   workflow_call:
   workflow_dispatch:
   pull_request:
-    branches: [ add-docker ]
+    branches:
+      - master
 
 jobs:
   build:
@@ -15,28 +16,13 @@ jobs:
     env:
       SECRET_KEY: GitHub-Actions-CI
       ALLOWED_HOSTS: localhost
-      CORS_ALLOWED_ORIGINS: http://localhost:3000;http://localhost:8000;http://localhost
+      CORS_ALLOWED_ORIGINS: http://localhost:3000,http://localhost:8000,http://localhost
       MYSQL_READY: True
-      MYSQL_ROOT_PASSWORD: devpass
-      MYSQL_DATABASE: testdb
-      MYSQL_USER: litte
-      MYSQL_PASSWORD: devpass
-      MYSQL_HOST: mysql_db
-      MYSQL_PORT: 3306
-
-    services:
-      mysql_db:
-        image: mysql:9.3.0
-        env:
-          MYSQL_DATABASE: ${{ env.MYSQL_DATABASE }}
-          MYSQL_ROOT_PASSWORD: ${{ env.MYSQL_ROOT_PASSWORD }}
-        ports:
-          - 3306:3306
-        options: >-
-          --health-cmd "mysqladmin ping -h 127.0.0.1 -u root -pdevpass"
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 3
+      MYSQL_DATABASE: ${{ secrets.MYSQL_DATABASE }}
+      MYSQL_USER: ${{ secrets.MYSQL_USER }}
+      MYSQL_PASSWORD: ${{ secrets.MYSQL_PASSWORD }}
+      MYSQL_HOST: ${{ secrets.MYSQL_HOST }}
+      MYSQL_PORT: ${{ secrets.MYSQL_PORT }}
 
     steps:
       - name: Checkout repository
@@ -51,6 +37,10 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
+
+      - name: Check database connection
+        run: |
+          python manage.py check --database default
 
       - name: Check if missing migrations
         run: |

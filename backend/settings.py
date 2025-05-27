@@ -42,6 +42,8 @@ INSTALLED_APPS = [
     'djoser',
     'drf_spectacular',
     'api',
+    'authentication',
+
 ]
 
 MIDDLEWARE = [
@@ -93,8 +95,6 @@ DB_IS_AVAILABLE = all([
     os.environ.get('MYSQL_PORT'),
 ])
 
-
-
 if DB_IS_AVAILABLE and os.getenv('MYSQL_READY', 'False') == 'True':
     DATABASES = {
         'default': {
@@ -106,8 +106,6 @@ if DB_IS_AVAILABLE and os.getenv('MYSQL_READY', 'False') == 'True':
             'PORT': os.getenv('MYSQL_PORT'),
         }
     }
-
-
 
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
@@ -156,11 +154,18 @@ REST_FRAMEWORK = {
     'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
 }
 
+AUTH_USER_MODEL = 'authentication.User'
+AUTHENTICATION_BACKENDS = [
+    'authentication.backends.EmailBackend'
+]
+
 DJOSER = {
     'TOKEN_MODEL': None,
 }
 
 SIMPLE_JWT = {
+    'USER_ID_FIELD': 'id',  # model property to attempt claims for
+    'USER_ID_CLAIM': 'user_id',  # actual keyword in token data
     'AUTH_HEADER_TYPES': ('JWT',),
     'ACCESS_TOKEN_LIFETIME': timedelta(days=1),
     'REFRESH_TOKEN_LIFETIME': timedelta(days=5),
@@ -176,6 +181,4 @@ SPECTACULAR_SETTINGS = {
     },
 }
 
-
 CORS_ALLOWED_ORIGINS = os.getenv('CORS_ALLOWED_ORIGINS', 'http://localhost').split(",")
-

@@ -17,7 +17,7 @@ jobs:
       SECRET_KEY: GitHub-Actions-CI
       ALLOWED_HOSTS: localhost
       CORS_ALLOWED_ORIGINS: http://localhost:3000,http://localhost:8000,http://localhost
-      MYSQL_READY: True
+      MYSQL_READY: False
       MYSQL_DATABASE: ${{ secrets.MYSQL_DATABASE }}
       MYSQL_USER: ${{ secrets.MYSQL_USER }}
       MYSQL_PASSWORD: ${{ secrets.MYSQL_PASSWORD }}

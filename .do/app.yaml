@@ -1,0 +1,81 @@
+alerts:
+- rule: DEPLOYMENT_FAILED
+- rule: DOMAIN_FAILED
+envs:
+- key: SECRET_KEY
+  scope: RUN_AND_BUILD_TIME
+  type: SECRET
+  value: EV[1:cMLdgm6jfDDtAUOAK3/rhSFKm3sUzV49:3e52GbvLXmQ0lpRYDtzV96aZsb6eYaJZRNLb9Gzy6kheFBL0k1y1fA2SPIOQVB6y8COGewMcQ8X51FOo6f0QemqI]
+- key: DEBUG
+  scope: RUN_AND_BUILD_TIME
+  value: "False"
+- key: ALLOWED_HOSTS
+  scope: RUN_AND_BUILD_TIME
+  type: SECRET
+  value: EV[1:3kf/88Z/iQOBlpQQJIR/is6ee18SjMxv:2mcEnxmOV90V5ti2LuQzElNgrL6Z5xhDK5vvNbg=]
+- key: CORS_ALLOWED_ORIGINS
+  scope: RUN_AND_BUILD_TIME
+  type: SECRET
+  value: EV[1:bh+YqGAVVQ03/FEMfLBW4jNJ0dShuMZa:mVgee8bJVPeFxsVPfB73bSbaKd6QBrT+vb+Y7PyNBU/tgq9wiXA6K9HRb3HszkUqYcRmswsE8LGJHR11NCgV721YBYENvvi+Zd6SEQ==]
+- key: DJANGO_SUPERUSER_EMAIL
+  scope: RUN_AND_BUILD_TIME
+  type: SECRET
+  value: EV[1:vA007NHLS0FGrWsCn53CGrf1pRquR6FS:dyKCGJKYgtRUuHtWB6696VrhGC3WUq8DVUoZf+IPog1/Y2g=]
+- key: DJANGO_SUPERUSER_PASSWORD
+  scope: RUN_AND_BUILD_TIME
+  type: SECRET
+  value: EV[1:Tt/ajTye/PhPTgnMsdH9RfNwR4vL8J9K:1NuS6k5V1yrZUm1i14pQJdcl8WefEC4UcR62J4dh8A==]
+- key: DJANGO_SUPERUSER_FIRST_NAME
+  scope: RUN_AND_BUILD_TIME
+  type: SECRET
+  value: EV[1:iskOODfDqaDt+SZKvyFZ8CUydgDZXHwy:o0YZLMJd88nId8fzCVbZCwmWtyWL]
+- key: DJANGO_SUPERUSER_LAST_NAME
+  scope: RUN_AND_BUILD_TIME
+  type: SECRET
+  value: EV[1:r5LR4uK3Ei/2sbXKKGevVG6Z5kj6YcpZ:YVqthpScuRsnoesR9zteA/fdpsbk]
+- key: MYSQL_READY
+  scope: RUN_AND_BUILD_TIME
+  value: "False"
+- key: MYSQL_DATABASE
+  scope: RUN_AND_BUILD_TIME
+  type: SECRET
+  value: EV[1:Cdz4Bxs/CtJQbH0j/VE3XB8R55YtxCp4:xWTaZ7pbv/HQ9cRsKhafvQ==]
+- key: MYSQL_USER
+  scope: RUN_AND_BUILD_TIME
+  type: SECRET
+  value: EV[1:VHLAXK1jRr5coK70GlMd3hDtcYNfrQTD:q23DezsHPoeDumo1qi8pog==]
+- key: MYSQL_PASSWORD
+  scope: RUN_AND_BUILD_TIME
+  type: SECRET
+  value: EV[1:LBCzs5lAmhsDLkD70Ykas6Uv9yAiYHH8:tXbwPrAzpHHYiz0lKwOiHw==]
+- key: MYSQL_HOST
+  scope: RUN_AND_BUILD_TIME
+  type: SECRET
+  value: EV[1:lXiQuw4ZdfYIA+FxRSSVuK6t6/Pykp11:LJ81XSddAzlcXKXJy9MuXg==]
+- key: MYSQL_PORT
+  scope: RUN_AND_BUILD_TIME
+  type: SECRET
+  value: EV[1:aICRVOFdVKaV2Q8XuaGa8/4RAbYVZ+9V:+pRbYbRE1at5ez7PB1MTrw==]
+features:
+- buildpack-stack=ubuntu-22
+ingress:
+  rules:
+  - component:
+      name: pedroskzt-little-pequi-be
+    match:
+      path:
+        prefix: /
+maintenance: {}
+name: backend
+region: tor
+services:
+- http_port: 8080
+  image:
+    registry: pedroskzt
+    registry_type: GHCR
+    repository: little-pequi-be
+    digest: ${BACKEND_DIGEST}
+  instance_count: 1
+  instance_size_slug: apps-s-1vcpu-1gb
+  name: pedroskzt-little-pequi-be
+  run_command: sh ./entrypoint.sh

@@ -5,6 +5,8 @@ from django.utils import timezone
 
 
 class EmailBackend(ModelBackend):
+    """ Authenticate using email address as username."""
+
     def authenticate(self, request, username=None, password=None, **kwargs):
         user_model = get_user_model()
 

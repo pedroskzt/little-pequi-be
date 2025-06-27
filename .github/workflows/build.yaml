@@ -52,4 +52,5 @@ jobs:
         env:
           BACKEND_DIGEST: ${{ steps.push.outputs.digest }}
         with:
+          app_name: 'backend'
           token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}

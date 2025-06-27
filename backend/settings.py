@@ -174,7 +174,9 @@ SIMPLE_JWT = {
 
 SPECTACULAR_SETTINGS = {
     'TITLE': 'Little Pequi API',
-    'DESCRIPTION': 'Your project description!!!',
+    'DESCRIPTION': f'The Little Pequi restaurant project is a comprehensive restaurant management solution developed to '
+                   f'my portfolio.</br>For more information, visit the '
+                   f'<a href="https://github.com/pedroskzt/little-pequi-be" target="_blank">GitHub repository</a>.',
     'VERSION': '1.0.0',
     'SERVE_INCLUDE_SCHEMA': False,
     "SWAGGER_UI_SETTINGS": {

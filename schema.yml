@@ -2,7 +2,9 @@ openapi: 3.0.3
 info:
   title: Little Pequi API
   version: 1.0.0
-  description: Your project description!!!
+  description: The Little Pequi restaurant project is a comprehensive restaurant management
+    solution developed to my portfolio.</br>For more information, visit the <a href="https://github.com/pedroskzt/little-pequi-be"
+    target="_blank">GitHub repository</a>.
 paths:
   /api/v1/category:
     get:

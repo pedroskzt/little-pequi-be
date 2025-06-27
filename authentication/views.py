@@ -1,4 +1,4 @@
-from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
+from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView, TokenVerifyView
 
 
 # Create your views here.
@@ -9,4 +9,8 @@ class LoginViewSet(TokenObtainPairView):
 
 
 class RefreshViewSet(TokenRefreshView):
+    pass
+
+
+class TokenVerifyViewSet(TokenVerifyView):
     pass

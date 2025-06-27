@@ -1,4 +1,5 @@
 from django.contrib.auth.base_user import BaseUserManager
+from django.core.validators import EmailValidator
 from django.utils.translation import gettext_lazy as _
 
 
@@ -15,6 +16,12 @@ class EmailUserManager(BaseUserManager):
         """
         if not email:
             raise ValueError(_('The Email must be set'))
+
+        try:
+            EmailValidator()(email)
+        except:
+            raise ValueError(_('The Email must be valid'))
+
         email = self.normalize_email(email)
         extra_fields.setdefault('username', email)
         extra_fields.setdefault('first_name', first_name)

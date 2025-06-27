@@ -1,10 +1,10 @@
-from django.urls import path
 from rest_framework.routers import SimpleRouter
 
-from api.menu import MenuItemViewSet
+from api.menu import MenuItemViewSet, CategoryViewSet
 
 router = SimpleRouter(trailing_slash=False)
-router.register('menu-items', MenuItemViewSet)
+router.register('category', CategoryViewSet, basename='category')
+router.register('menu-item', MenuItemViewSet, basename='menu-item')
 
 urlpatterns = [
 ]

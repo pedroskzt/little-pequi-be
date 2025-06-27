@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.db import models
 from django.utils.text import slugify
 
@@ -21,7 +22,10 @@ class MenuItem(models.Model):
     featured = models.BooleanField(db_index=True)
     delivery = models.BooleanField(db_index=True)
     category = models.ManyToManyField(Category)
-    image = models.ImageField(upload_to='img/menu_items/')
+    image = models.ImageField(upload_to=settings.MENU_ITEM_MEDIA_ROOT)
+
+    # date_created = models.DateTimeField(auto_now_add=True)
+    # date_updated = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return self.title

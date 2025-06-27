@@ -1,3 +1,3 @@
-from .menu_models import (MenuItem)
-from .menu_serializers import (MenuItemSerializer)
-from .menu_views import (MenuItemViewSet)
+from .menu_models import (MenuItem, Category)
+from .menu_serializers import (MenuItemSerializer, CategorySerializer)
+from .menu_views import (MenuItemViewSet, CategoryViewSet)

@@ -10,6 +10,7 @@ omit =
     *admin.py
     *urls.py
     */settings/*
+    */core/CustomErrorManager/exception_handler.py
 
 [report]
 omit =
@@ -23,3 +24,4 @@ omit =
     *admin.py
     *urls.py
     */settings*
+    */core/CustomErrorManager/exception_handler.py

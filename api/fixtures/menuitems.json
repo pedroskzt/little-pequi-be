@@ -1,0 +1,83 @@
+[
+  {
+    "model": "api.menuitem",
+    "pk": 1,
+    "fields": {
+      "title": "Brigadeiro",
+      "price": "9.99",
+      "description": "The brigadeiro is a traditional Brazilian dessert. The dessert was created by a confectioner from Rio de Janeiro, Heloísa Nabuco de Oliveira, to promote the presidential candidacy of Eduardo Gomes.",
+      "featured": true,
+      "delivery": true,
+      "category": 3,
+      "image": "menu_items/brigadeiro-3-20250825084313.jpg",
+      "tags": [
+        1
+      ]
+    }
+  },
+  {
+    "model": "api.menuitem",
+    "pk": 2,
+    "fields": {
+      "title": "Chicken Stroganoff",
+      "price": "12.99",
+      "description": "Chicken Stroganoff is everything you know and love about Beef Stroganoff… except it’s made with chicken! Golden seared chicken thighs or breast smothered in a sour cream Stroganoff Sauce.",
+      "featured": true,
+      "delivery": false,
+      "category": 2,
+      "image": "menu_items/strogonoff-5-20250829030436.jpg",
+      "tags": [
+        1
+      ]
+    }
+  },
+  {
+    "model": "api.menuitem",
+    "pk": 3,
+    "fields": {
+      "title": "Calabrese Pizza",
+      "price": "9.35",
+      "description": "Calabrese pizza features a tomato sauce base with toppings like spicy Calabrian sausage, hot or spicy peppers, and fresh tomatoes.",
+      "featured": true,
+      "delivery": true,
+      "category": 2,
+      "image": "menu_items/pizza-de-calabresa_1723632793345-6-20250829030910.jpg",
+      "tags": [
+        1,
+        4
+      ]
+    }
+  },
+  {
+    "model": "api.menuitem",
+    "pk": 4,
+    "fields": {
+      "title": "Feijoada",
+      "price": "25.32",
+      "description": "The famous slow-cooked, flavor-packed, umami-rich black bean stew from Brazil, this authentic Feijoada recipe is easy to make and is an absolute feast for the taste buds!  Incredibly delicious, it’s no wonder this ultimate comfort dish is the national dish of Brazil!",
+      "featured": true,
+      "delivery": false,
+      "category": 2,
+      "image": "menu_items/feijoada-7-20250829032000.jpg",
+      "tags": [
+        1
+      ]
+    }
+  },
+  {
+    "model": "api.menuitem",
+    "pk": 5,
+    "fields": {
+      "title": "Patê",
+      "price": "5.99",
+      "description": "Pâté is a forcemeat, or a mixture of ground meat, fat, and seasonings, which can be made from pork, poultry, fish, or even vegetables like mushrooms.",
+      "featured": true,
+      "delivery": true,
+      "category": 1,
+      "image": "menu_items/pate-19-20251009035318.jpg",
+      "tags": [
+        5
+      ]
+    }
+  }
+]

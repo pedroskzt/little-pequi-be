@@ -1,0 +1,42 @@
+[
+  {
+    "model": "api.tag",
+    "pk": 1,
+    "fields": {
+      "title": "Brazilian",
+      "slug": "brazilian"
+    }
+  },
+  {
+    "model": "api.tag",
+    "pk": 2,
+    "fields": {
+      "title": "Pasta",
+      "slug": "pasta"
+    }
+  },
+  {
+    "model": "api.tag",
+    "pk": 3,
+    "fields": {
+      "title": "Vegan",
+      "slug": "vegan"
+    }
+  },
+  {
+    "model": "api.tag",
+    "pk": 4,
+    "fields": {
+      "title": "Pizza",
+      "slug": "pizza"
+    }
+  },
+  {
+    "model": "api.tag",
+    "pk": 5,
+    "fields": {
+      "title": "French",
+      "slug": "french"
+    }
+  }
+]

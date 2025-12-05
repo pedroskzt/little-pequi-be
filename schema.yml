@@ -955,7 +955,7 @@ components:
       - uid
     Category:
       type: object
-      description: Serializer for the category model
+      description: Serializer for the tags model
       properties:
         id:
           type: integer
@@ -1019,7 +1019,7 @@ components:
       - uid
     PatchedCategory:
       type: object
-      description: Serializer for the category model
+      description: Serializer for the tags model
       properties:
         id:
           type: integer

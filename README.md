@@ -182,7 +182,7 @@ This service is a modern, Python and Django-based REST API backend, built with D
 
    Those are a few examples of the apis. For the complete list, check the [Swagger Schema](schema.yml).
 
-### Category
+### Tag
 
 | Endpoint                     | Method | Description               | Permissions         |
 |------------------------------|--------|---------------------------|---------------------|

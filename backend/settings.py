@@ -41,9 +41,10 @@ INSTALLED_APPS = [
     'rest_framework',
     'djoser',
     'drf_spectacular',
+    'storages',
+    'django_filters',
     'api',
     'authentication',
-
 ]
 
 MIDDLEWARE = [
@@ -152,7 +153,14 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ),
+    'DEFAULT_FILTER_BACKENDS': (
+        'django_filters.rest_framework.DjangoFilterBackend',
+    ),
+    'DEFAULT_PARSER_CLASSES': (
+        'rest_framework.parsers.JSONParser',
+    ),
     'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+    'EXCEPTION_HANDLER': 'core.CustomErrorManager.exception_handler.custom_exception_handler',
 }
 
 AUTH_USER_MODEL = 'authentication.User'
@@ -170,6 +178,7 @@ SIMPLE_JWT = {
     'AUTH_HEADER_TYPES': ('JWT',),
     'ACCESS_TOKEN_LIFETIME': timedelta(days=1),
     'REFRESH_TOKEN_LIFETIME': timedelta(days=5),
+    'TOKEN_OBTAIN_SERIALIZER': 'authentication.serializers.MyTokenObtainPairSerializer',
 }
 
 SPECTACULAR_SETTINGS = {
@@ -185,3 +194,31 @@ SPECTACULAR_SETTINGS = {
 }
 
 CORS_ALLOWED_ORIGINS = os.getenv('CORS_ALLOWED_ORIGINS', 'http://localhost').split(",")
+
+# Google Cloud Storage config
+GS_PROJECT_ID = os.environ.get('GS_PROJECT_ID')
+GS_MEDIA_BUCKET_NAME = os.environ.get('GS_MEDIA_BUCKET_NAME')
+
+# Public URLs without querystrings for media files:
+GS_QUERYSTRING_AUTH = False  # public media
+
+GS_DEFAULT_ACL = None  # recommended with uniform bucket-level access
+
+GS_ALLOWED_FORMATS = ['.png', '.jpg', '.jpeg', '.gif']
+
+STORAGES = {
+    "default": {
+        "BACKEND": "storages.backends.gcloud.GoogleCloudStorage",
+        "OPTIONS": {
+            "bucket_name": GS_MEDIA_BUCKET_NAME,
+        },
+    },
+    "staticfiles": {
+        "BACKEND": "storages.backends.gcloud.GoogleCloudStorage",
+        "OPTIONS": {
+            "bucket_name": GS_MEDIA_BUCKET_NAME,
+        },
+    }
+}
+
+MEDIA_URL = f"https://storage.googleapis.com/{GS_MEDIA_BUCKET_NAME}/"

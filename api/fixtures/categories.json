@@ -1,0 +1,29 @@
+[
+  {
+    "model": "api.category",
+    "pk": 1,
+    "fields": {
+      "title": "Appetizers",
+      "slug": "appetizers",
+      "display_order": 1
+    }
+  },
+  {
+    "model": "api.category",
+    "pk": 2,
+    "fields": {
+      "title": "Main Dishes",
+      "slug": "main-dishes",
+      "display_order": 2
+    }
+  },
+  {
+    "model": "api.category",
+    "pk": 3,
+    "fields": {
+      "title": "Desserts",
+      "slug": "desserts",
+      "display_order": 0
+    }
+  }
+]

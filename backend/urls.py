@@ -15,6 +15,9 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
+from rest_framework.exceptions import server_error
+
+handler500 = server_error
 
 urlpatterns = [
     path('admin/', admin.site.urls),

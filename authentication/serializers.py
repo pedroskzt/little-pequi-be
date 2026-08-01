@@ -1,12 +1,14 @@
-from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+from django.contrib.auth import get_user_model
+from djoser.serializers import UserSerializer
+from djoser.conf import settings
 
-class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
-    @classmethod
-    def get_token(cls, user):
-        token = super().get_token(user)
+User = get_user_model()
 
-        # Add custom claims
-        if user.is_staff:
-            token['admin'] = user.is_staff
 
-        return token
+class CustomUserSerializer(UserSerializer):
+    class Meta:
+        model = User
+        fields = tuple(User.REQUIRED_FIELDS) + (
+            settings.USER_ID_FIELD,
+            settings.LOGIN_FIELD) + (
+                     "is_staff",)

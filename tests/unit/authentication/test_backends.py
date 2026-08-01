@@ -12,16 +12,16 @@ class UserBackendTests(TestCase):
     def setUp(self):
         """Set up test data"""
 
-        self.login_data = {
+        self.signIn_data = {
             'email': fake.email(),
             'password': fake.password(length=8)
         }
 
         user_data = {
-            'email': self.login_data['email'],
+            'email': self.signIn_data['email'],
             'first_name': fake.first_name(),
             'last_name': fake.last_name(),
-            'password': self.login_data['password']
+            'password': self.signIn_data['password']
         }
 
         self.user = User.objects.create_user(**user_data)
@@ -30,34 +30,34 @@ class UserBackendTests(TestCase):
         """Test UserBackend authenticate method"""
 
         # Authenticate with email
-        self.assertEqual(authenticate(email=self.login_data['email'], password=self.login_data['password']), self.user)
+        self.assertEqual(authenticate(email=self.signIn_data['email'], password=self.signIn_data['password']), self.user)
 
         # Authenticate with username
-        self.assertEqual(authenticate(username=self.login_data['email'], password=self.login_data['password']), self.user)
+        self.assertEqual(authenticate(username=self.signIn_data['email'], password=self.signIn_data['password']), self.user)
 
     def test_user_backend_authenticate_invalid_credentials(self):
         """Test UserBackend authenticate method with invalid credentials"""
 
         # Wrong Password
-        self.assertIsNone(authenticate(email=self.login_data['email'], password="wrongPass"))
+        self.assertIsNone(authenticate(email=self.signIn_data['email'], password="wrongPass"))
 
         # Wrong Email
-        self.assertIsNone(authenticate(email="wrongEmail@example.com", password=self.login_data['password']))
+        self.assertIsNone(authenticate(email="wrongEmail@example.com", password=self.signIn_data['password']))
 
         # Wrong Username
-        self.assertIsNone(authenticate(username="wrongEmail@example.com", password=self.login_data['password']))
+        self.assertIsNone(authenticate(username="wrongEmail@example.com", password=self.signIn_data['password']))
 
     def test_user_backend_authenticate_missing_required_fields(self):
         """Test UserBackend authenticate method with missing required fields"""
 
         # Authenticate with an email and missing password
-        self.assertIsNone(authenticate(email=self.login_data['email']))
+        self.assertIsNone(authenticate(email=self.signIn_data['email']))
 
         # Authenticate with a username and missing password
-        self.assertIsNone(authenticate(username=self.login_data['email']))
+        self.assertIsNone(authenticate(username=self.signIn_data['email']))
 
         # Authenticate missing an email or a username
-        self.assertIsNone(authenticate(password=self.login_data['password']))
+        self.assertIsNone(authenticate(password=self.signIn_data['password']))
 
     def test_user_backend_authenticate_inactive_user(self):
         """Test UserBackend authenticate method with an inactive user"""
@@ -66,7 +66,7 @@ class UserBackendTests(TestCase):
         self.user.save()
 
         # Authenticate with email
-        self.assertIsNone(authenticate(email=self.login_data['email'], password=self.login_data['password']))
+        self.assertIsNone(authenticate(email=self.signIn_data['email'], password=self.signIn_data['password']))
 
         # Authenticate with username
-        self.assertIsNone(authenticate(username=self.login_data['email'], password=self.login_data['password']))
+        self.assertIsNone(authenticate(username=self.signIn_data['email'], password=self.signIn_data['password']))

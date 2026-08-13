@@ -24,6 +24,9 @@ jobs:
       MYSQL_PASSWORD: ${{ secrets.MYSQL_PASSWORD }}
       MYSQL_HOST: ${{ secrets.MYSQL_HOST }}
       MYSQL_PORT: ${{ secrets.MYSQL_PORT }}
+      GS_PROJECT_ID: "little-pequi"
+      GOOGLE_APPLICATION_CREDENTIALS: "/var/lib/littlepequi/little-pequi-gcs.json"
+      GS_MEDIA_BUCKET_NAME: "little-pequi"
 
     steps:
       - name: Checkout repository
@@ -33,6 +36,10 @@ jobs:
         uses: actions/setup-python@v3
         with:
           python-version: 3.12.2
+
+      - name: Setup GCS Credentials
+        run: |
+          echo ${{ secrets.GCS_KEY_FILE }}|base64 --decode > /var/lib/littlepequi/little-pequi-gcs.json
 
       - name: Install Dependencies
         run: |

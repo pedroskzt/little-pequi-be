@@ -1,4 +1,5 @@
 from unittest.mock import patch
+from unittest.mock import MagicMock
 
 from django.conf import settings
 from django.contrib.auth import get_user_model
@@ -907,12 +908,16 @@ class MenuItemViewSetTests(APITestCase):
         self.assertEqual(response.data['category'], category1_fields)
         self.client.force_authenticate(user=None)
 
+
     @patch('core.BlobManager.BlobHandler.BlobHandler.BlobHandler.delete_blob')
     @patch('storages.backends.gcloud.GoogleCloudStorage.exists')
     @patch('storages.backends.gcloud.GoogleCloudStorage.save')
-    def test_update_image(self, mock_gcs_save, mock_gcs_exists, mock_delete_blob, ):
+    @patch("storages.backends.gcloud.GoogleCloudStorage.client")
+    def test_update_image(self, mock_storage_client, mock_gcs_save, mock_gcs_exists, mock_delete_blob ):
         """Test update image API"""
         update_image_url = reverse("menu-item-image", kwargs={"pk": self.menu_item.id})
+
+        mock_storage_client.bucket.return_value.blob.side_effect = lambda name: MagicMock(public_url=f"{settings.MEDIA_URL}{name}")
 
         # Mock the GCS save method to return a fake path
         image_name = f'{settings.MENU_ITEM_MEDIA_ROOT}test_gcs_image.png'
@@ -967,15 +972,17 @@ class MenuItemViewSetTests(APITestCase):
         # Verify that delete_blob was called with the correct image name
         mock_delete_blob.assert_called_once_with(old_image_name)
 
-
     @patch('core.BlobManager.BlobHandler.BlobHandler.BlobHandler.delete_blob')
     @patch('storages.backends.gcloud.GoogleCloudStorage.exists')
     @patch('storages.backends.gcloud.GoogleCloudStorage.save')
-    def test_destroy_menu_item(self, mock_gcs_save, mock_gcs_exists, mock_delete_blob,):
+    @patch("storages.backends.gcloud.GoogleCloudStorage.client")
+    def test_destroy_menu_item(self, mock_storage_client, mock_gcs_save, mock_gcs_exists, mock_delete_blob):
         """Test destroy Menu Item API"""
-
         datail_url = reverse("menu-item-detail", kwargs={"pk": self.menu_item.id})
 
+        # Mock the GCS Client connection
+        mock_storage_client.bucket.return_value.blob.side_effect = lambda name: MagicMock(
+            public_url=f"{settings.MEDIA_URL}{name}")
 
         # Mock the GCS save method to return a fake path
         image_name = f'{settings.MENU_ITEM_MEDIA_ROOT}test_gcs_image.png'

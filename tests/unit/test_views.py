@@ -910,6 +910,67 @@ class MenuItemViewSetTests(APITestCase):
     @patch('core.BlobManager.BlobHandler.BlobHandler.BlobHandler.delete_blob')
     @patch('storages.backends.gcloud.GoogleCloudStorage.exists')
     @patch('storages.backends.gcloud.GoogleCloudStorage.save')
+    def test_update_image(self, mock_gcs_save, mock_gcs_exists, mock_delete_blob, ):
+        """Test update image API"""
+        update_image_url = reverse("menu-item-image", kwargs={"pk": self.menu_item.id})
+
+        # Mock the GCS save method to return a fake path
+        image_name = f'{settings.MENU_ITEM_MEDIA_ROOT}test_gcs_image.png'
+        mock_gcs_save.return_value = image_name
+        mock_gcs_save.side_effect = lambda name, content, max_length=None: name
+        mock_gcs_exists.return_value = True
+
+        # Mock the delete_blob method to simulate successful deletion
+        mock_delete_blob.return_value = None
+
+        # Create the image
+        initial_image = create_image_file(name='test_gcs_image.png', mode='L')
+
+        # Add the image to the menu item
+        self.menu_item.image = initial_image
+        self.menu_item.save()
+
+        old_image_name = self.menu_item.image.name
+        old_image_url = self.menu_item.image.url
+
+        # Check if the image exists on the menu item object
+        self.assertTrue(self.menu_item.image.storage.exists(old_image_name))
+
+        # As regular user
+        self.client.force_authenticate(user=self.user)
+        new_image = create_image_file(name='new_gcs_image.png', mode='L')
+        response = self.client.post(update_image_url, {'image': new_image}, format='multipart')
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertIn('permission_denied', response.data['detail'].code)
+        self.client.force_authenticate(user=None)
+        # Verify that delete_blob wasn't called with the correct image name
+        mock_delete_blob.assert_not_called()
+
+        # As admin
+        self.client.force_authenticate(user=self.admin)
+        new_image = create_image_file(name='new_gcs_image.png', mode='L')
+        response = self.client.post(update_image_url, {'image': new_image}, format='multipart')
+        self.menu_item.refresh_from_db()
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        # Check if the image still exists on the menu item object
+        self.assertTrue(self.menu_item.image.storage.exists(self.menu_item.image.name))
+
+        # Check if the image was changed
+        self.assertEqual(response.data['image'], self.menu_item.image.url)
+        self.assertNotEqual(response.data['image'], old_image_url)
+
+
+        self.client.force_authenticate(user=None)
+
+        # Verify that delete_blob was called with the correct image name
+        mock_delete_blob.assert_called_once_with(old_image_name)
+
+
+    @patch('core.BlobManager.BlobHandler.BlobHandler.BlobHandler.delete_blob')
+    @patch('storages.backends.gcloud.GoogleCloudStorage.exists')
+    @patch('storages.backends.gcloud.GoogleCloudStorage.save')
     def test_destroy_menu_item(self, mock_gcs_save, mock_gcs_exists, mock_delete_blob,):
         """Test destroy Menu Item API"""
 
@@ -919,6 +980,7 @@ class MenuItemViewSetTests(APITestCase):
         # Mock the GCS save method to return a fake path
         image_name = f'{settings.MENU_ITEM_MEDIA_ROOT}test_gcs_image.png'
         mock_gcs_save.return_value = image_name
+        mock_gcs_save.side_effect = lambda name, content, max_length=None: name
         mock_gcs_exists.return_value = True
 
         # Mock the delete_blob method to simulate successful deletion
@@ -931,8 +993,10 @@ class MenuItemViewSetTests(APITestCase):
         self.menu_item.image = test_image
         self.menu_item.save()
 
+        old_image_name = self.menu_item.image.name
+
         # Check if the image exists on the menu item object
-        image_exists = self.menu_item.image.storage.exists(self.menu_item.image.name)
+        image_exists = self.menu_item.image.storage.exists(old_image_name)
         self.assertTrue(image_exists)
 
         # As regular user
@@ -950,4 +1014,4 @@ class MenuItemViewSetTests(APITestCase):
         self.client.force_authenticate(user=None)
 
         # Verify that delete_blob was called with the correct image name
-        mock_delete_blob.assert_called_once_with(image_name)
+        mock_delete_blob.assert_called_once_with(old_image_name)

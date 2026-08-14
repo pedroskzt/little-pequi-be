@@ -1,9 +1,9 @@
 from django.urls import path
 
-from authentication.views import LoginViewSet, RefreshViewSet, TokenVerifyViewSet
+from authentication.views import SignInViewSet, RefreshViewSet, SignOutViewSet
 
 urlpatterns = [
-    path('sign-in/', LoginViewSet.as_view(), name='login'),
+    path('sign-in/', SignInViewSet.as_view(), name='signin'),
+    path('sign-out/', SignOutViewSet.as_view(), name='signout'),
     path('refresh/', RefreshViewSet.as_view(), name='refresh'),
-    path('verify/', TokenVerifyViewSet.as_view(), name='verify')
 ]

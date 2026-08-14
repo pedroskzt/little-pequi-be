@@ -2,29 +2,35 @@ from django.contrib.auth import get_user_model
 from django.test import TestCase
 from faker.proxy import Faker
 
-from authentication.serializers import MyTokenObtainPairSerializer
+from authentication.serializers import CustomUserSerializer
 
 fake = Faker()
 User = get_user_model()
 
 
-class MyTokenObtainPairSerializerTests(TestCase):
-    """Test cases for MyTokenObtainPairSerializer"""
+class CustomUserSerializerTests(TestCase):
+    """Test cases for CustomUserSerializer"""
 
     def setUp(self):
-        self.login_data = {
+        self.signIn_data = {
             'email': fake.email(),
             'password': fake.password(length=8)
         }
         self.user = User.objects.create_user(
             first_name=fake.first_name(),
             last_name=fake.last_name(),
-            email=self.login_data['email'],
-            password=self.login_data['password'],
+            email=self.signIn_data['email'],
+            password=self.signIn_data['password'],
         )
 
-    def test_token_is_returned_with_admin_flag_for_admins(self):
-        """Test that token is returned with an admin flag set to True for admins"""
+    def test_serializer_returning_the_is_staff_flag(self):
+        """Test that serializer is returning the is_staff flag"""
+
+        user_ser = CustomUserSerializer(instance=self.user)
+        self.assertIn('is_staff', user_ser.data)
+
+    def test_serializer_returning_the_is_staff_true_for_admin(self):
+        """Test that serializer is returning the is_staff flag set to True for admins"""
 
         # Set the user as admin
         self.user.is_staff = True
@@ -33,12 +39,12 @@ class MyTokenObtainPairSerializerTests(TestCase):
         # Confirm the user is an admin
         self.assertTrue(self.user.is_staff)
 
-        token = MyTokenObtainPairSerializer.get_token(self.user)
-        self.assertIn('admin', token)
-        self.assertTrue(token['admin'])
+        user_ser = CustomUserSerializer(instance=self.user)
+        self.assertIn('is_staff', user_ser.data)
+        self.assertTrue(user_ser.data['is_staff'])
 
-    def test_token_is_not_returned_with_admin_flag_for_users(self):
-        """Test that token is not returned with an admin flag set to True for normal users"""
+    def test_serializer_returning_the_is_staff_false_for_admin(self):
+        """Test that serializer is returning the is_staff flag set to False for normal users"""
 
         # Set the user as admin
         self.user.is_staff = False
@@ -47,5 +53,6 @@ class MyTokenObtainPairSerializerTests(TestCase):
         # Confirm the user is not an admin
         self.assertFalse(self.user.is_staff)
 
-        token = MyTokenObtainPairSerializer.get_token(self.user)
-        self.assertNotIn('admin', token)
+        user_ser = CustomUserSerializer(instance=self.user)
+        self.assertIn('is_staff', user_ser.data)
+        self.assertFalse(user_ser.data['is_staff'])

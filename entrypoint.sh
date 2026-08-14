@@ -1,7 +1,10 @@
 #!/bin/bash
 
-
 APP_PORT=${PORT:-8000}
+
+mkdir /var/lib/littlepequi
+echo $GCS_KEY_FILE|base64 --decode > /var/lib/littlepequi/little-pequi-gcs.json
+
 cd /app/
 
 /opt/venv/bin/python manage.py migrate --noinput

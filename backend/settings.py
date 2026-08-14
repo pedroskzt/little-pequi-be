@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'corsheaders',
     'rest_framework',
+    'rest_framework_simplejwt.token_blacklist',
     'djoser',
     'drf_spectacular',
     'storages',
@@ -170,15 +171,22 @@ AUTHENTICATION_BACKENDS = [
 
 DJOSER = {
     'TOKEN_MODEL': None,
+    'SERIALIZERS': {
+        'current_user': 'authentication.serializers.CustomUserSerializer',
+    }
 }
 
 SIMPLE_JWT = {
+    "ROTATE_REFRESH_TOKENS": True,
+    "BLACKLIST_AFTER_ROTATION": True,
+
     'USER_ID_FIELD': 'id',  # model property to attempt claims for
     'USER_ID_CLAIM': 'user_id',  # actual keyword in token data
+
     'AUTH_HEADER_TYPES': ('JWT',),
-    'ACCESS_TOKEN_LIFETIME': timedelta(days=1),
-    'REFRESH_TOKEN_LIFETIME': timedelta(days=5),
-    'TOKEN_OBTAIN_SERIALIZER': 'authentication.serializers.MyTokenObtainPairSerializer',
+
+    'ACCESS_TOKEN_LIFETIME': timedelta(seconds=60),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=7),
 }
 
 SPECTACULAR_SETTINGS = {
@@ -194,6 +202,7 @@ SPECTACULAR_SETTINGS = {
 }
 
 CORS_ALLOWED_ORIGINS = os.getenv('CORS_ALLOWED_ORIGINS', 'http://localhost').split(",")
+CORS_ALLOW_CREDENTIALS = True
 
 # Google Cloud Storage config
 GS_PROJECT_ID = os.environ.get('GS_PROJECT_ID')

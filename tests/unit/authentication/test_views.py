@@ -3,6 +3,7 @@ from django.urls import reverse
 from faker import Faker
 from rest_framework import status
 from rest_framework.test import APITestCase
+from rest_framework_simplejwt.token_blacklist.models import BlacklistedToken
 
 User = get_user_model()
 fake = Faker()
@@ -14,91 +15,61 @@ class AuthenticationViewsTests(APITestCase):
     def setUp(self):
         """Set up test data"""
 
-        self.login_data = {
+        self.signIn_data = {
             'email': fake.email(),
             'password': fake.password(length=8)
         }
         self.user = User.objects.create_user(
             first_name=fake.first_name(),
             last_name=fake.last_name(),
-            email=self.login_data['email'],
-            password=self.login_data['password']
+            email=self.signIn_data['email'],
+            password=self.signIn_data['password']
         )
-        self.login_url = reverse('login')
+        self.signIn_url = reverse('signin')
         self.refresh_url = reverse('refresh')
-        self.verify_url = reverse('verify')
+        self.signOut_url = reverse('signout')
 
-    def test_LoginViewSet_with_valid_credentials(self):
-        """Test login API with valid credentials"""
+    def test_SignInViewSet_with_valid_credentials(self):
+        """Test sign in API with valid credentials"""
 
-        response = self.client.post(self.login_url, self.login_data, format='json')
+        response = self.client.post(self.signIn_url, self.signIn_data, format='json')
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertIn('access', response.data)
-        self.assertIn('refresh', response.data)
+        self.assertIn('refresh', response.client.cookies)
 
-    def test_LoginViewSet_with_inactive_user(self):
-        """Test login API with an inactive user"""
+    def test_SignInViewSet_with_inactive_user(self):
+        """Test sign in API with an inactive user"""
 
         self.user.is_active = False
         self.user.save()
 
-        response = self.client.post(self.login_url, self.login_data, format='json')
+        response = self.client.post(self.signIn_url, self.signIn_data, format='json')
 
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
         self.assertIn('no_active_account', response.data['detail'].code)
 
-    def test_TokenVerifyViewSet_with_valid_token(self):
-        """Test token verify API with valid access and refresh token"""
+    def test_SignInViewSet_with_invalid_credentials(self):
+        """Test sign in API with invalid credentials"""
 
-        response = self.client.post(self.login_url, self.login_data, format='json')
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-
-        access_token = response.data['access']
-        refresh_token = response.data['refresh']
-
-        # Verify a valid access token
-        response = self.client.post(self.verify_url, {"token": access_token}, format='json')
-
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-
-        # Verify a valid refresh token
-        response = self.client.post(self.verify_url, {"token": refresh_token}, format='json')
-
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-
-    def test_TokenVerifyViewSet_with_invalid_token(self):
-        """Test token verify API with invalid token"""
-
-        response = self.client.post(self.login_url, self.login_data, format='json')
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-
-        # Verify a valid access token
-        response = self.client.post(self.verify_url, {"token": "invalid_access_token"}, format='json')
+        self.signIn_data['password'] = 'wrongpassword'
+        response = self.client.post(self.signIn_url, self.signIn_data, format='json')
 
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
-    def test_LoginViewSet_with_invalid_credentials(self):
-        """Test login API with invalid credentials"""
-
-        self.login_data['password'] = 'wrongpassword'
-        response = self.client.post(self.login_url, self.login_data, format='json')
-
-        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
-
-    def test_LoginViewSet_with_missing_credentials(self):
-        """Test login API with missing credentials"""
+    def test_SignInViewSet_with_missing_credentials(self):
+        """Test sign in API with missing credentials"""
 
         # Missing email
-        response = self.client.post(self.login_url,
-                                    {'password': self.login_data['password']},
+        response = self.client.post(self.signIn_url,
+                                    {'password': self.signIn_data['password']},
                                     format='json')
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
         # Missing password
-        response = self.client.post(self.login_url,
-                                    {'email': self.login_data['email']},
+        response = self.client.post(self.signIn_url,
+                                    {'email': self.signIn_data['email']},
                                     format='json')
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
@@ -106,23 +77,75 @@ class AuthenticationViewsTests(APITestCase):
     def test_RefreshViewSet_with_valid_refresh_token(self):
         """Test refresh API with a valid refresh token"""
 
-        response = self.client.post(self.login_url, self.login_data, format='json')
+        response = self.client.post(self.signIn_url, self.signIn_data, format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        refresh_token = response.data['refresh']
+        self.assertIn('refresh', response.client.cookies)
 
-        response = self.client.post(self.refresh_url, {"refresh": refresh_token}, format='json')
+        refresh_token = response.client.cookies['refresh'].value
+
+        # Cookie is already set on self.client from the Sign-in request above.
+        response = self.client.post(self.refresh_url)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertIn('access', response.data)
+        self.assertIn('refresh', response.client.cookies)
+        self.assertNotEqual(refresh_token, response.client.cookies['refresh'].value)
 
     def test_RefreshViewSet_with_invalid_refresh_token(self):
         """Test refresh API with an invalid refresh token"""
 
-        response = self.client.post(self.login_url, self.login_data, format='json')
+        response = self.client.post(self.signIn_url, self.signIn_data, format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
-        response = self.client.post(self.refresh_url, {"refresh": "invalid refresh token"}, format='json')
+        self.client.cookies['refresh']="invalid_refresh_token"
+
+        response = self.client.post(self.refresh_url)
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+    def test_RefreshViewSet_with_missing_refresh_token(self):
+        """Test refresh API with a missing refresh token"""
+        response = self.client.post(self.signIn_url, self.signIn_data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.client.cookies.pop('refresh')
+
+        response = self.client.post(self.refresh_url)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertIn('refresh', response.client.cookies)
+        self.assertEqual(response.client.cookies['refresh'].value, "")
+
+    def test_SignOutViewSet_with_valid_refresh_token(self):
+        """Test sign out API with a valid refresh token"""
+        response = self.client.post(self.signIn_url, self.signIn_data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertIn('refresh', response.client.cookies)
+
+        refresh_token = response.client.cookies['refresh'].value
+        response = self.client.post(self.signOut_url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertIn('refresh', response.client.cookies)
+        self.assertEqual(response.client.cookies['refresh'].value, "")
+        self.assertTrue(BlacklistedToken.objects.filter(token__token=refresh_token).exists())
+
+    def test_SignOutViewSet_with_invalid_refresh_token(self):
+        """Test sign out API with an invalid refresh token"""
+        response = self.client.post(self.signIn_url, self.signIn_data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        self.client.cookies['refresh']="invalid_refresh_token"
+        response = self.client.post(self.signOut_url)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+        self.assertIn('Token is invalid', response.data['detail'])
+
+    def test_SignOutViewSet_with_missing_refresh_token(self):
+        """Test sign out API with a missing refresh token"""
+        response = self.client.post(self.signIn_url, self.signIn_data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        self.client.cookies.pop('refresh')
+        response = self.client.post(self.signOut_url)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertIn('refresh', response.client.cookies)
+        self.assertEqual(response.client.cookies['refresh'].value, "")
 
 
 class UserAccountViewsTests(APITestCase):
@@ -140,8 +163,7 @@ class UserAccountViewsTests(APITestCase):
 
         self.create_user_url = reverse('user-list')
         self.get_user_url = reverse('user-me')
-        self.login_url = reverse('login')
-        self.verify_url = reverse('verify')
+        self.signIn_url = reverse('signin')
 
     def test_create_user_api_with_valid_data(self):
         """Test create user API with valid data"""
